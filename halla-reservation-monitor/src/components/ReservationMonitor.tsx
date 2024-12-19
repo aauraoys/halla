@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { checkReservation } from '../utils/api';
 import { ReservationStatus } from '../types/types';
 
@@ -18,10 +18,8 @@ export default function ReservationMonitor() {
   const [error, setError] = useState<string>('');
   const [isFlashing, setIsFlashing] = useState(false);
   const [lastCheckTime, setLastCheckTime] = useState<string>('');
-  const [progress, setProgress] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(false);
   const [flashCards, setFlashCards] = useState(false);
-  const animationFrameRef = useRef<number | null>(null);
 
   const courses: CourseInfo[] = [
     { courseSeq: '244', name: '관음사' },
@@ -48,6 +46,7 @@ export default function ReservationMonitor() {
     if (isLoading) return;
     
     try {
+      setIsLoading(true);
       setLastCheckTime(formatTime(new Date()));
       
       const newStatuses: Record<string, Record<string, ReservationStatus>> = {};
@@ -89,81 +88,55 @@ export default function ReservationMonitor() {
       }
 
       setFlashCards(true);
-      setTimeout(() => setFlashCards(false), 500);
+      setTimeout(() => setFlashCards(false), 1000);
       
       setStatuses(newStatuses);
       setError('');
     } catch (err) {
       setError('예약 상태 확인 중 오류가 발생했습니다');
       console.error(err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const startProgress = () => {
-    const duration = 10000;
-    let animationStart: number;
-
-    const animate = async (timestamp: number) => {
-      if (isLoading) return;
-
-      if (!animationStart) {
-        animationStart = timestamp;
-      }
-
-      const elapsed = timestamp - animationStart;
-      const newProgress = Math.min((elapsed / duration) * 100, 100);
-      
-      if (newProgress < 100) {
-        setProgress(newProgress);
-        animationFrameRef.current = requestAnimationFrame(animate);
-      } else {
-        setProgress(100);
-        setIsLoading(true);
-        
-        try {
-          await checkAvailability();
-        } finally {
-          setIsLoading(false);
-          animationStart = performance.now();
-          setProgress(0);
-          animationFrameRef.current = requestAnimationFrame(animate);
-        }
-      }
-    };
-
-    animationFrameRef.current = requestAnimationFrame(animate);
-  };
-
-  const checkAvailabilityRef = useRef(checkAvailability);
-  const startProgressRef = useRef(startProgress);
-
   useEffect(() => {
-    checkAvailabilityRef.current = checkAvailability;
-  }, [checkAvailability]);
-
-  useEffect(() => {
-    startProgressRef.current = startProgress;
-  }, [startProgress]);
-
-  useEffect(() => {
-    checkAvailabilityRef.current();
-    startProgressRef.current();
-
-    return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-    };
+    checkAvailability();
+    const intervalId = setInterval(checkAvailability, 10000);
+    return () => clearInterval(intervalId);
   }, []);
 
   return (
-    <div className={`min-h-screen bg-gray-50 ${isFlashing ? 'animate-pulse' : ''}`}>
+    <div 
+      className={`min-h-screen bg-gray-50 ${isFlashing ? 'animate-[pulse_1s_ease-in-out_infinite]' : ''}`}
+    >
+      <style jsx>{`
+        @keyframes progressBar {
+          0% { width: 0%; }
+          100% { width: 100%; }
+        }
+        
+        @keyframes cardFlash {
+          0% { transform: scale(1); }
+          50% { transform: scale(1.02); opacity: 0.8; }
+          100% { transform: scale(1); }
+        }
+        
+        .progress-bar {
+          animation: progressBar 10s linear infinite;
+        }
+        
+        .flash-animation {
+          animation: cardFlash 1s ease-in-out;
+        }
+      `}</style>
+
       <div className="max-w-6xl mx-auto p-6">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">째히와 윤도리의 한라산 예약 대작전</h1>
-          <h1 className="text-xl font-bold text-green-800 mb-2">예약 가능한 날짜가 나오면 초록색으로 표시되고 알림이 떠요!</h1>
+          <h2 className="text-xl font-bold text-gray-800 mb-2">예약 가능한 날짜가 나오면 초록색으로 표시되고 알림이 떠요!</h2>
+          <h2 className="text-xl font-bold text-blue-800 mb-2">첫타임인 05시만을 관찰합니다.</h2>
           
-          {/* 시간 표시 및 진행 바 */}
           <div className="bg-white rounded-lg shadow-md p-4 mb-4">
             <div className="flex justify-center items-center space-x-8 mb-3">
               <div className="text-gray-600">
@@ -171,16 +144,11 @@ export default function ReservationMonitor() {
                 <span className="text-blue-600">{lastCheckTime}</span>
               </div>
             </div>
-            {/* 진행 바 */}
             <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-blue-500 rounded-full transition-all duration-300"
-                style={{ width: `${progress}%` }}
-              />
+              <div className="h-full bg-blue-500 rounded-full progress-bar" />
             </div>
           </div>
           
-          {/* 예약하기 버튼 */}
           <a 
             href="https://visithalla.jeju.go.kr/"
             target="_blank"
@@ -210,10 +178,8 @@ export default function ReservationMonitor() {
                     key={`${date.date}-${course.courseSeq}`}
                     className={`
                       p-6 rounded-lg shadow-lg transition-all duration-300
-                      ${status.isAvailable 
-                        ? 'bg-green-50 border-2 border-green-500' 
-                        : 'bg-white border border-gray-200'}
-                      ${flashCards ? 'animate-fade-in' : ''}
+                      ${status.isAvailable ? 'bg-green-50 border-2 border-green-500' : 'bg-white border border-gray-200'}
+                      ${flashCards ? 'flash-animation' : ''}
                     `}
                   >
                     <div className="flex justify-between items-center mb-4">
@@ -221,10 +187,7 @@ export default function ReservationMonitor() {
                       <span 
                         className={`
                           px-4 py-1 rounded-full text-sm font-semibold
-                          ${status.isAvailable 
-                            ? 'bg-green-100 text-green-800' 
-                            : 'bg-red-100 text-red-800'
-                          }
+                          ${status.isAvailable ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}
                         `}
                       >
                         {status.isAvailable ? '예약가능' : '마감'}
