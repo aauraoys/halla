@@ -5,7 +5,9 @@ export interface CourseResponse {
     reserveCnt: string;
     fcltySeq?: string;
     courseSeq?: string;
-    [key: string]: string | undefined;
+    visitDt?: string;
+    visitTm?: string;
+    [key: string]: string | undefined; 
   };
 }
 
