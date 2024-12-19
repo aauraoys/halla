@@ -1,3 +1,5 @@
+import { CourseResponse } from '../types/types';
+
 export async function checkReservation(courseSeq: string, visitDt: string, visitTm: string): Promise<CourseResponse> {
   const response = await fetch('/api/reservation/coursePersonAjax.do', {
     method: 'POST',
