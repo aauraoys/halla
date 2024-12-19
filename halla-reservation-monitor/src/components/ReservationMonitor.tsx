@@ -160,7 +160,8 @@ export default function ReservationMonitor() {
     <div className={`min-h-screen bg-gray-50 ${isFlashing ? 'animate-pulse' : ''}`}>
       <div className="max-w-6xl mx-auto p-6">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">한라산 예약 모니터링</h1>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">째히와 윤도리의 한라산 예약 대작전</h1>
+          <h1 className="text-xl font-bold text-green-800 mb-2">예약 가능한 날짜가 나오면 초록색으로 표시되고 알림이 떠요!</h1>
           
           {/* 시간 표시 및 진행 바 */}
           <div className="bg-white rounded-lg shadow-md p-4 mb-4">
