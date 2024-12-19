@@ -3,12 +3,15 @@ export interface CourseResponse {
   coursePerson: {
     limitCnt: string;
     reserveCnt: string;
-    [key: string]: any;
+    fcltySeq?: string;
+    courseSeq?: string;
+    [key: string]: string | undefined;
   };
 }
 
 export interface ReservationStatus {
   courseSeq: string;
+  name: string;
   isAvailable: boolean;
   limitCnt: string;
   reserveCnt: string;

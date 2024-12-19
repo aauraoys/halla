@@ -135,16 +135,20 @@ export default function ReservationMonitor() {
     animationFrameRef.current = requestAnimationFrame(animate);
   };
 
-  useEffect(() => {
-    checkAvailability();
+ useEffect(() => {
+  const checkAndStart = async () => {
+    await checkAvailability();
     startProgress();
+  };
+  
+  checkAndStart();
 
-    return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-    };
-  }, []);
+  return () => {
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+    }
+  };
+}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className={`min-h-screen bg-gray-50 ${isFlashing ? 'animate-pulse' : ''}`}>
