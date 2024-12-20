@@ -27,10 +27,7 @@ export default function ReservationMonitor() {
   ];
 
   const dates: DateInfo[] = [
-    { date: '2024.12.28', display: '12월 28일' },
     { date: '2024.12.29', display: '12월 29일' },
-    { date: '2024.12.30', display: '12월 30일' },
-    { date: '2024.12.31', display: '12월 31일' },
   ];
 
   const formatTime = (date: Date) => {
