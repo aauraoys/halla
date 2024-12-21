@@ -22,7 +22,7 @@ export default function ReservationMonitor() {
   const [flashCards, setFlashCards] = useState(false);
 
   const courses: CourseInfo[] = [
-    { courseSeq: '244', name: '관음사' },
+    // { courseSeq: '244', name: '관음사' },
     { courseSeq: '242', name: '성판악' },
   ];
 
