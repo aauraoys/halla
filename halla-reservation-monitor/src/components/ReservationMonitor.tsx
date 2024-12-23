@@ -158,6 +158,23 @@ export default function ReservationMonitor() {
     return () => clearInterval(intervalId);
   }, [monitoringItems]);
 
+  // 날짜별로 정렬된 모니터링 아이템 생성
+  const sortedMonitoringGroups = Object.entries(
+    monitoringItems.reduce((acc, item) => {
+      if (!acc[item.date]) {
+        acc[item.date] = {
+          display: item.display,
+          items: []
+        };
+      }
+      acc[item.date].items.push(item);
+      return acc;
+    }, {} as Record<string, { display: string; items: MonitoringItem[] }>)
+  ).sort(([dateA], [dateB]) => {
+    // YYYY.MM.DD 형식의 날짜 문자열을 비교
+    return dateA.localeCompare(dateB);
+  });
+
   return (
     <div 
       className={`min-h-screen bg-gray-50 ${isFlashing ? 'animate-[pulse_1s_ease-in-out_infinite]' : ''}`}
@@ -256,18 +273,7 @@ export default function ReservationMonitor() {
         )}
 
         {/* Monitoring Cards */}
-        {Object.entries(
-          monitoringItems.reduce((acc, item) => {
-            if (!acc[item.date]) {
-              acc[item.date] = {
-                display: item.display,
-                items: []
-              };
-            }
-            acc[item.date].items.push(item);
-            return acc;
-          }, {} as Record<string, { display: string; items: MonitoringItem[] }>)
-        ).map(([date, { display, items }]) => (
+        {sortedMonitoringGroups.map(([date, { display, items }]) => (
           <div key={date} className="mb-8">
             <h2 className="text-xl font-bold text-black mb-4">{display}</h2>
             <div className="grid gap-6 md:grid-cols-2">
@@ -280,7 +286,7 @@ export default function ReservationMonitor() {
                     key={`${item.date}-${item.courseSeq}`}
                     className={`
                       p-6 rounded-lg shadow-lg transition-all duration-300 relative
-                      {status.isAvailable ? 'bg-green-50 border-2 border-green-500' : 'bg-white border border-gray-200'}
+                      ${status.isAvailable ? 'bg-green-50 border-2 border-green-500' : 'bg-white border border-gray-200'}
                       ${flashCards ? 'flash-animation' : ''}
                     `}
                   >
