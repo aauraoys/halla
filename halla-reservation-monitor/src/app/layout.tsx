@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "이재히 그만삐지세요",
-  description: "한라산에서 안싸우게 해주세요",
+  title: "한라산 탐방예약 모니터링",
+  description: "건승하세요",
 };
 
 export default function RootLayout({
