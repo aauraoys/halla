@@ -86,15 +86,7 @@ export default function ReservationMonitor() {
   const [selectedDisplay, setSelectedDisplay] = useState<string>('');
   const [selectedTime, setSelectedTime] = useState<string>('');
   const [selectedTimeLabel, setSelectedTimeLabel] = useState<string>('');
-  const [monitoringItems, setMonitoringItems] = useState<MonitoringItem[]>([
-    {
-      date: '2026.04.11',
-      display: '4월 11일 (토)',
-      courseSeq: '242', // 관음사
-      visitTm: 'TIME1',
-      visitLabel: '1회차 · 05:00 입산',
-    },
-  ]);
+  const [monitoringItems, setMonitoringItems] = useState<MonitoringItem[]>([]);
   const [countdown, setCountdown] = useState<number>(POLL_INTERVAL / 1000);
   const [enableSound, setEnableSound] = useState<boolean>(true);
   const [enableDesktop, setEnableDesktop] = useState<boolean>(false);
@@ -511,31 +503,33 @@ export default function ReservationMonitor() {
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div>
                 <p className="text-sm font-semibold text-[#00114D]">제주도 한라산 · 다오름 원정</p>
-                <h2 className="text-2xl font-bold text-[#00114D]">
+                <h2 className="text-2xl sm:text-3xl font-bold text-[#00114D] leading-tight">
                   한라산 백록담 (2박 3일)
                 </h2>
-                <p className="text-sm text-[#00114D]/85">
+                <p className="text-sm sm:text-base text-[#00114D]/85 leading-snug">
                   한국 3대 명산 정상찍기 두 번째 프로젝트 ‘한라산’ — 2박 3일의 여행 같은 산행
                 </p>
               </div>
-              <div className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-[#00114D] text-white text-sm font-semibold shadow-md animate-glow">
+              <div className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-[#00114D] text-white text-xs sm:text-sm font-semibold shadow-md animate-glow whitespace-nowrap">
                 다오름 회원 전용 원정
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-2 text-center text-sm font-semibold text-[#00114D]">
-              <div className="rounded-xl border border-[#00114D]/20 bg-[#00114D]/05 px-3 py-2 animate-floaty">
-                <div className="text-xs text-[#00114D]/70">소요시간</div>
-                <div className="text-base">8시간</div>
-              </div>
-              <div className="rounded-xl border border-[#00114D]/20 bg-[#00114D]/05 px-3 py-2 animate-floaty" style={{ animationDelay: '0.1s' }}>
-                <div className="text-xs text-[#00114D]/70">거리</div>
-                <div className="text-base">18km</div>
-              </div>
-              <div className="rounded-xl border border-[#00114D]/20 bg-[#00114D]/05 px-3 py-2 animate-floaty" style={{ animationDelay: '0.2s' }}>
-                <div className="text-xs text-[#00114D]/70">일정</div>
-                <div className="text-base">4/10(금)~4/12(일)</div>
-              </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-center text-sm font-semibold text-[#00114D]">
+              {[
+                { label: '소요시간', value: '8시간', delay: '0s' },
+                { label: '거리', value: '18km', delay: '0.1s' },
+                { label: '일정', value: '4/10(금)~4/12(일)', delay: '0.2s' },
+              ].map((metric) => (
+                <div
+                  key={metric.label}
+                  className="rounded-xl border border-[#00114D]/20 bg-[#00114D]/05 px-3 py-2 animate-floaty"
+                  style={{ animationDelay: metric.delay }}
+                >
+                  <div className="text-xs text-[#00114D]/70">{metric.label}</div>
+                  <div className="text-base sm:text-lg">{metric.value}</div>
+                </div>
+              ))}
             </div>
 
             <div className="relative">
@@ -566,8 +560,12 @@ export default function ReservationMonitor() {
                     <span className="absolute sm:-left-8 -top-3 sm:top-4 h-10 w-10 sm:h-11 sm:w-11 rounded-full bg-[#00114D] text-white grid place-items-center font-bold shadow-lg animate-floaty text-[11px] sm:text-sm tracking-tight whitespace-nowrap">
                       {item.day}
                     </span>
-                    <div className="text-lg font-semibold text-[#00114D] pt-6 sm:pt-0">{item.title}</div>
-                    <div className="text-sm text-[#00114D]/80">{item.detail}</div>
+                    <div className="text-base sm:text-lg font-semibold text-[#00114D] pt-6 sm:pt-0 leading-snug">
+                      {item.title}
+                    </div>
+                    <div className="text-sm sm:text-base text-[#00114D]/80 leading-snug">
+                      {item.detail}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -661,8 +659,8 @@ export default function ReservationMonitor() {
           <span className="text-sm text-[#00114D]/70">
             10초마다 자동 확인 · 알림 쿨타임 5분 · 회차별 별도 모니터링
           </span>
-          <span className="text-sm font-semibold text-[#00114D] bg-[#00114D]/10 border border-[#00114D]/20 px-3 py-1 rounded-lg">
-            예약 오픈 카운트다운: {activationCountdown}
+          <span className="text-sm font-semibold text-[#00114D] bg-[#00114D]/10 border border-[#00114D]/20 px-3 py-1 rounded-lg whitespace-nowrap">
+            예약 오픈: {activationCountdown || '대기 중'}
           </span>
         </div>
 
