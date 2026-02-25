@@ -20,7 +20,6 @@ interface MonitoringItem {
 
 const POLL_INTERVAL = 10_000; // ms
 const ALERT_COOLDOWN = 5 * 60 * 1000; // ms
-const ACTIVATION_TIME = new Date('2026-03-03T09:00:00+09:00').getTime(); // 4월 예약 오픈 시각 (KST)
 
 const courses: CourseInfo[] = [
   { courseSeq: '244', name: '성판악' },
@@ -93,8 +92,6 @@ export default function ReservationMonitor() {
   const [toast, setToast] = useState<{ id: number; message: string } | null>(
     null
   );
-  const [activationCountdown, setActivationCountdown] = useState<string>('');
-  const [isActivationReached, setIsActivationReached] = useState<boolean>(Date.now() >= ACTIVATION_TIME);
   const monitoringItemsRef = useRef<MonitoringItem[]>([]);
   const isCheckingRef = useRef(false);
 
@@ -195,8 +192,6 @@ export default function ReservationMonitor() {
   const checkAvailability = useCallback(async () => {
     const itemsSnapshot = monitoringItemsRef.current;
     if (isCheckingRef.current || itemsSnapshot.length === 0) return;
-    // 예약 오픈 이전에는 네트워크 요청을 하지 않음
-    if (!isActivationReached) return;
 
     try {
       isCheckingRef.current = true;
@@ -263,36 +258,11 @@ export default function ReservationMonitor() {
       setIsLoading(false);
       isCheckingRef.current = false;
     }
-  }, [enableDesktop, enableSound, isActivationReached]);
+  }, [enableDesktop, enableSound]);
 
   useEffect(() => {
     monitoringItemsRef.current = monitoringItems;
   }, [monitoringItems]);
-
-  // 예약 오픈 카운트다운
-  useEffect(() => {
-    const tick = () => {
-      const now = Date.now();
-      if (now >= ACTIVATION_TIME) {
-        setIsActivationReached(true);
-        setActivationCountdown('예약 오픈!');
-        return;
-      }
-      const diff = ACTIVATION_TIME - now;
-      const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const m = Math.floor((diff / (1000 * 60)) % 60);
-      const s = Math.floor((diff / 1000) % 60);
-      setActivationCountdown(
-        `${d}일 ${h.toString().padStart(2, '0')}:${m
-          .toString()
-          .padStart(2, '0')}:${s.toString().padStart(2, '0')}`
-      );
-    };
-    tick();
-    const id = setInterval(tick, 1000);
-    return () => clearInterval(id);
-  }, []);
 
   useEffect(() => {
     if (enableDesktop && 'Notification' in window && Notification.permission === 'default') {
@@ -659,9 +629,6 @@ export default function ReservationMonitor() {
           <span className="text-sm text-[#00114D]/70">
             10초마다 자동 확인 · 알림 쿨타임 5분 · 회차별 별도 모니터링
           </span>
-          <span className="text-sm font-semibold text-[#00114D] bg-[#00114D]/10 border border-[#00114D]/20 px-3 py-1 rounded-lg whitespace-nowrap">
-            예약 오픈: {activationCountdown || '대기 중'}
-          </span>
         </div>
 
         {error && (
@@ -703,8 +670,6 @@ export default function ReservationMonitor() {
                     : (Number(status.reserveCnt || 0) /
                         Number(status.limitCnt || 1)) *
                       100;
-                const isDisabledForOpen = !isActivationReached;
-
                 return (
                   <div
                     key={`${item.date}-${item.courseSeq}-${item.visitTm}`}
@@ -712,13 +677,8 @@ export default function ReservationMonitor() {
                       status.isAvailable
                         ? 'border-[#00114D] bg-[#00114D]/5'
                         : 'border-[#00114D]/15 bg-white'
-                      } ${flashCards ? 'flash-animation' : ''} ${isDisabledForOpen ? 'opacity-60 pointer-events-none' : ''}`}
+                      } ${flashCards ? 'flash-animation' : ''}`}
                   >
-                    {isDisabledForOpen && (
-                      <div className="absolute inset-0 rounded-2xl bg-white/60 backdrop-blur-[1px] border border-dashed border-[#00114D]/30 grid place-items-center text-sm font-semibold text-[#00114D]">
-                        3월 3일 09:00 오픈 예정 · 자동 모니터링 대기 중
-                      </div>
-                    )}
                     <div className="flex justify-between items-center mb-3">
                       <h3 className="text-lg font-semibold text-[#00114D]">
                         {status.name}
