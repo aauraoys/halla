@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "한라산 탐방예약 모니터링",
-  description: "건승하세요",
+  title: "한라산 탐방로 예약 모니터",
+  description: "성판악·관음사 코스의 예약 가능 좌석을 실시간으로 확인합니다.",
 };
 
 export default function RootLayout({
@@ -23,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="ko">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
