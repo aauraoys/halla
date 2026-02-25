@@ -540,7 +540,7 @@ export default function ReservationMonitor() {
                   ※ 2월 13일 모집 마감 / 동호회 지침에 따라 변동 가능
                 </div>
                 <div className="text-xs text-[#00114D]/80 mt-1">
-                  ※ 4월 입산 예약은 3월 3일 09시에 접수 시작 (그 전에는 조회만 가능)
+                  ※ 4월 입산 예약 및 모니터링은 3월 3일 09시부터 가능합니다.
                 </div>
               </div>
             </div>
