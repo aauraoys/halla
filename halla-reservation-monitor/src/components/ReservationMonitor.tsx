@@ -328,19 +328,7 @@ export default function ReservationMonitor() {
           0% { transform: translateY(16px); opacity: 0; }
           100% { transform: translateY(0); opacity: 1; }
         }
-        @keyframes floaty {
-          0% { transform: translateY(0px); }
-          50% { transform: translateY(-8px); }
-          100% { transform: translateY(0px); }
-        }
-        @keyframes glowPulse {
-          0% { box-shadow: 0 0 0 0 rgba(0,17,77,0.25); }
-          70% { box-shadow: 0 0 0 18px rgba(0,17,77,0); }
-          100% { box-shadow: 0 0 0 0 rgba(0,17,77,0); }
-        }
         .animate-fadeInUp { animation: fadeInUp 0.6s ease forwards; }
-        .animate-floaty { animation: floaty 5s ease-in-out infinite; }
-        .animate-glow { animation: glowPulse 2.8s ease-out infinite; }
         .orb {
           position: absolute;
           width: 220px;
@@ -480,22 +468,21 @@ export default function ReservationMonitor() {
                   한국 3대 명산 정상찍기 두 번째 프로젝트 ‘한라산’ — 2박 3일의 여행 같은 산행
                 </p>
               </div>
-              <div className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-[#00114D] text-white text-xs sm:text-sm font-semibold shadow-md animate-glow whitespace-nowrap">
+              <div className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-[#00114D] text-white text-xs sm:text-sm font-semibold shadow-md whitespace-nowrap">
                 다오름 회원 전용 원정
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-center text-sm font-semibold text-[#00114D]">
-              {[
-                { label: '소요시간', value: '8시간', delay: '0s' },
-                { label: '거리', value: '18km', delay: '0.1s' },
-                { label: '일정', value: '4/10(금)~4/12(일)', delay: '0.2s' },
-              ].map((metric) => (
-                <div
-                  key={metric.label}
-                  className="rounded-xl border border-[#00114D]/20 bg-[#00114D]/05 px-3 py-2 animate-floaty"
-                  style={{ animationDelay: metric.delay }}
-                >
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-center text-sm font-semibold text-[#00114D]">
+                {[
+                  { label: '소요시간', value: '8시간', delay: '0s' },
+                  { label: '거리', value: '18km', delay: '0.1s' },
+                  { label: '일정', value: '4/10(금)~4/12(일)', delay: '0.2s' },
+                ].map((metric) => (
+                  <div
+                    key={metric.label}
+                    className="rounded-xl border border-[#00114D]/20 bg-[#00114D]/05 px-3 py-2"
+                  >
                   <div className="text-xs text-[#00114D]/70">{metric.label}</div>
                   <div className="text-base sm:text-lg">{metric.value}</div>
                 </div>
@@ -503,7 +490,7 @@ export default function ReservationMonitor() {
             </div>
 
             <div className="relative">
-              <div className="hidden sm:block absolute left-5 top-0 bottom-0 w-[2px] bg-gradient-to-b from-[#00114D] via-[#00114D]/40 to-transparent animate-floaty" />
+              <div className="hidden sm:block absolute left-5 top-0 bottom-0 w-[2px] bg-gradient-to-b from-[#00114D] via-[#00114D]/40 to-transparent" />
               <div className="space-y-4 sm:space-y-3">
                 {[
                   {
@@ -527,7 +514,7 @@ export default function ReservationMonitor() {
                     className="relative sm:ml-10 rounded-2xl border border-[#00114D]/15 bg-white shadow-md p-4 animate-fadeInUp"
                     style={{ animationDelay: `${idx * 0.12}s` }}
                   >
-                    <span className="absolute sm:-left-8 -top-3 sm:top-4 h-10 w-10 sm:h-11 sm:w-11 rounded-full bg-[#00114D] text-white grid place-items-center font-bold shadow-lg animate-floaty text-[11px] sm:text-sm tracking-tight whitespace-nowrap">
+                    <span className="absolute sm:-left-8 -top-3 sm:top-4 h-10 w-10 sm:h-11 sm:w-11 rounded-full bg-[#00114D] text-white grid place-items-center font-bold shadow-lg text-[11px] sm:text-sm tracking-tight whitespace-nowrap">
                       {item.day}
                     </span>
                     <div className="text-base sm:text-lg font-semibold text-[#00114D] pt-6 sm:pt-0 leading-snug">
