@@ -96,7 +96,7 @@ export default function ReservationMonitor() {
   const isCheckingRef = useRef(false);
 
   const dateOptions = useMemo(() => {
-    const options: { date: string; display: string }[] = [];
+    const options: { date: string; display: string; isWeekend: boolean }[] = [];
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
 
@@ -114,6 +114,7 @@ export default function ReservationMonitor() {
       options.push({
         date: dateString,
         display: displayString,
+        isWeekend: date.getDay() === 0 || date.getDay() === 6,
       });
     }
     return options;
@@ -551,18 +552,26 @@ export default function ReservationMonitor() {
           <div className="grid gap-6 md:grid-cols-2">
             <div>
               <h3 className="text-lg font-semibold text-[#00114D] mb-2">날짜 선택</h3>
-              <select
-                className="w-full px-4 py-3 rounded-xl bg-white border border-[#00114D]/30 text-[#00114D] focus:outline-none focus:ring-2 focus:ring-[#00114D]"
-                value={selectedDate}
-                onChange={handleDateSelect}
-              >
-                <option value="">날짜를 선택하세요</option>
-                {dateOptions.map((option) => (
-                  <option key={option.date} value={option.date}>
-                    {option.display}
-                  </option>
-                ))}
-              </select>
+                <select
+                  className="w-full px-4 py-3 rounded-xl bg-white border border-[#00114D]/30 text-[#00114D] focus:outline-none focus:ring-2 focus:ring-[#00114D]"
+                  value={selectedDate}
+                  onChange={handleDateSelect}
+                >
+                  <option value="">날짜를 선택하세요</option>
+                  {dateOptions.map((option) => (
+                    <option
+                      key={option.date}
+                      value={option.date}
+                      style={{
+                        color: option.isWeekend ? '#d1436c' : '#00114D',
+                        fontWeight: option.isWeekend ? 700 : 500,
+                      }}
+                    >
+                      {option.display}
+                    </option>
+                  ))}
+                </select>
+              <p className="text-xs text-[#00114D]/60 mt-1">주말은 드롭다운에서 붉은색으로 표시됩니다.</p>
             </div>
 
             <div>
