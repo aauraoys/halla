@@ -104,17 +104,21 @@ export default function ReservationMonitor() {
       const date = new Date(tomorrow);
       date.setDate(date.getDate() + i);
 
+      const dayOfWeek = date.getDay();
+      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+      if (!isWeekend) continue; // 평일은 제외
+
       const dateString = `${date.getFullYear()}.${String(
         date.getMonth() + 1
       ).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
       const displayString = `${date.getMonth() + 1}월 ${date.getDate()}일 (${
-        dayNames[date.getDay()]
+        dayNames[dayOfWeek]
       })`;
 
       options.push({
         date: dateString,
         display: displayString,
-        isWeekend: date.getDay() === 0 || date.getDay() === 6,
+        isWeekend,
       });
     }
     return options;
@@ -571,7 +575,7 @@ export default function ReservationMonitor() {
                     </option>
                   ))}
                 </select>
-              <p className="text-xs text-[#00114D]/60 mt-1">주말은 드롭다운에서 붉은색으로 표시됩니다.</p>
+              <p className="text-xs text-[#00114D]/60 mt-1">평일은 제외하고 주말만 선택할 수 있습니다.</p>
             </div>
 
             <div>
