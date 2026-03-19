@@ -100,7 +100,7 @@ export default function ReservationMonitor() {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    for (let i = 0; i < 14; i++) {
+    for (let i = 0; i < 30; i++) {
       const date = new Date(tomorrow);
       date.setDate(date.getDate() + i);
 
