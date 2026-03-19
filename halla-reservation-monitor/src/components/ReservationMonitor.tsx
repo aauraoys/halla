@@ -88,6 +88,47 @@ export default function ReservationMonitor() {
   const [monitoringItems, setMonitoringItems] = useState<MonitoringItem[]>([]);
   const [countdown, setCountdown] = useState<number>(POLL_INTERVAL / 1000);
   const [enableSound, setEnableSound] = useState<boolean>(true);
+
+  useEffect(() => {
+    const today = new Date();
+    const target = new Date(today.getFullYear(), 3, 11); // 4월 11일 (0-indexed month)
+
+    if (today >= target) return;
+
+    const dateString = `${target.getFullYear()}.${String(target.getMonth() + 1).padStart(2, '0')}.${String(target.getDate()).padStart(2, '0')}`;
+    const displayString = `${target.getMonth() + 1}월 ${target.getDate()}일 (${dayNames[target.getDay()]})`;
+
+    const requiredItems: MonitoringItem[] = [];
+
+    for (const course of courses) {
+      for (const time of timeOptions) {
+        requiredItems.push({
+          date: dateString,
+          display: displayString,
+          courseSeq: course.courseSeq,
+          visitTm: time.code,
+          visitLabel: time.label,
+        });
+      }
+    }
+
+    setMonitoringItems((prev) => {
+      const merged = [...prev];
+      requiredItems.forEach((item) => {
+        if (
+          !merged.some(
+            (prevItem) =>
+              prevItem.date === item.date &&
+              prevItem.courseSeq === item.courseSeq &&
+              prevItem.visitTm === item.visitTm
+          )
+        ) {
+          merged.push(item);
+        }
+      });
+      return merged;
+    });
+  }, []);
   const [enableDesktop, setEnableDesktop] = useState<boolean>(false);
   const [toast, setToast] = useState<{ id: number; message: string } | null>(
     null
